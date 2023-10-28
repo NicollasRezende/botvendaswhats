@@ -1,56 +1,122 @@
-# Importação de módulos
+# Chatbot WhatsApp com Python e Flask
 
-## O código começa importando os módulos flask e requests:
+## Este projeto consiste em um chatbot para o WhatsApp desenvolvido em Python utilizando o framework Flask.
+Módulos Importados
 
-  Flask: um framework web Python popular para construir aplicativos web e APIs
-  Requests: uma biblioteca Python popular para fazer requests HTTP
+O código inicia importando os seguintes módulos:
+  - flask - Framework web Python para construir APIs e aplicativos
+  - request - Para lidar com requisições HTTP
+  - requests - Cliente HTTP Python para fazer requests
+  - config_bot - Arquivo de configuração
+  - menssages - Arquivo com as mensagens e menus
+  - funcs - Funções úteis
 
 ## Configuração do Flask
 
-### Um objeto app do Flask é criado para representar o aplicativo Flask.
+Um objeto app do Flask é criado para representar o aplicativo:
 
-O parâmetro name passado é um padrão do Flask que permite que ele saiba onde procurar por arquivos estáticos e templates.
+app = Flask(__name__)
+
+O parâmetro __name__ é padrão e permite que o Flask saiba onde procurar arquivos estáticos e templates.
 Configurações
 
-### Algumas configurações são definidas:
+Algumas configurações importantes são definidas no arquivo config_bot.py:
 
-  - VERIFY_TOKEN: um token usado pelo Facebook para verificar a origem do webhook
-  - WHATSAPP_TOKEN: um token de acesso do WhatsApp Business API para enviar mensagens
-  - numero_user: armazenará o número do usuário que enviou a mensagem
+    VERIFY_TOKEN - Token de verificação do webhook do Facebook
+    WHATSAPP_TOKEN - Token de acesso à API do WhatsApp
+    BASE_URL - URL base da API do WhatsApp
+    PAGE_ID - ID da página do WhatsApp
 
-## Rota para verificação do webhook
+Rota para Verificação do Webhook
 
-### Uma rota é definida para lidar com a verificação do webhook do Facebook:
+Uma rota é definida para lidar com a verificação do webhook pelo Facebook:
+@app.route('/', methods=['GET'])
+def verify_webhook():
 
- - É mapeada para a rota '/'
- - Aceita apenas solicitações GET
- - Verifica se o token de verificação enviado pelo Facebook corresponde ao configurado
- - Se sim, retorna o desafio enviado pelo Facebook
- - Se não, retorna um erro 403
+  - Mapeada para raiz '/'
+  - Aceita apenas GET
+  - Verifica se o token recebido corresponde ao configurado
+  - Retorna o desafio se verdadeiro ou 403 se falso
 
-### Isso permite que o Facebook valide que este é o endpoint correto para receber atualizações.
-## Rota para receber mensagens
+Isso permite que o Facebook valide o endpoint para receber atualizações.
+Rota para Receber Mensagens
 
-## Outra rota é definida para lidar com mensagens recebidas do webhook do Facebook:
+Outra rota recebe mensagens do webhook:
 
- - Também mapeada para '/'
- - Aceita apenas solicitações POST
- - O JSON enviado pelo Facebook é obtido
- - As mensagens são extraídas e impressas
- - O número do remetente é salvo
- - Retorna "OK"
+@app.route('/', methods=['POST'])
+def receive_messages():
 
-## Função para enviar mensagens
+  - Mapeada para raiz '/'
+  - Aceita apenas POST
+  - Obtém o JSON e extrai mensagens e contatos
+  - Salva número do remetente
+  - Retorna "OK"
 
-### A função enviar_msg é definida para enviar mensagens de volta para o usuário via WhatsApp API:
+Função para Enviar Mensagens
 
- - Recebe o número e a mensagem como parâmetros
- - Faz request POST para a API com os headers corretos
- - Envia o número, mensagem e token no payload
- - Retorna a resposta da API
+A função send_message() envia mensagens para o usuário via API:
+
+def send_message(number, message):
+
+  url = BASE_URL + PAGE_ID + '/messages'  
+
+  headers = {    
+    "Authorization": "Bearer " + WHATSAPP_TOKEN
+  }
+   
+  data = {
+     "messaging_product": "whatsapp",
+     "to": number,
+     "text": {"body": message} 
+  }
+
+  requests.post(url, headers=headers, json=data)
+
+    Faz request POST para a API
+    Adiciona headers e payload
+    Envia número, mensagem e token
 
 ## Inicialização
 
-### Por fim, o app Flask é iniciado se o script for executado diretamente.
+Por fim, o app é iniciado:
 
-Isso permite receber mensagens do webhook do Facebook, responder pelo WhatsApp usando a API e iniciar um bot simples.
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+Isso permite receber mensagens do webhook, responder pelo WhatsApp usando a API e ter um chatbot funcional.
+Funcionalidades
+
+O chatbot conta com as seguintes funcionalidades:
+Menus Interativos
+
+  - Menu inicial
+  - Menu de suporte
+  - Menu comercial
+
+Com opções na forma de botões e listas.
+Fluxo de Conversação
+
+Existe uma lógica para guiar o usuário:
+
+  - Detecção de saudação para mostrar menu inicial
+  - Navegação entre menus
+  - Respostas personalizadas
+
+Envio de Mensagens
+
+O bot consegue enviar:
+
+  - Texto
+  - Botões interativos
+  - Listas selecionáveis
+  - Links
+  - Contatos
+
+Usando a API do WhatsApp.
+Registro de Logs
+
+As mensagens do usuário são salvas em arquivos de log.
+## Conclusão
+
+O projeto implementa um chatbot funcional no WhatsApp usando Python e Flask. Possui fluxo de conversação, menus interativos, envio de mensagens e logs. Uma ótima base para construir bots mais avançados.
