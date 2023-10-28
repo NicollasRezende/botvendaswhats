@@ -15,7 +15,7 @@ O código inicia importando os seguintes módulos:
 
 Um objeto app do Flask é criado para representar o aplicativo:
 
-app = Flask(__name__)
+    app = Flask(__name__)
 
 O parâmetro __name__ é padrão e permite que o Flask saiba onde procurar arquivos estáticos e templates.
 Configurações
@@ -30,8 +30,9 @@ Algumas configurações importantes são definidas no arquivo config_bot.py:
 Rota para Verificação do Webhook
 
 Uma rota é definida para lidar com a verificação do webhook pelo Facebook:
-@app.route('/', methods=['GET'])
-def verify_webhook():
+
+    @app.route('/', methods=['GET'])
+    def verify_webhook():
 
   - Mapeada para raiz '/'
   - Aceita apenas GET
@@ -43,8 +44,8 @@ Rota para Receber Mensagens
 
 Outra rota recebe mensagens do webhook:
 
-@app.route('/', methods=['POST'])
-def receive_messages():
+    @app.route('/', methods=['POST'])
+    def receive_messages():
 
   - Mapeada para raiz '/'
   - Aceita apenas POST
@@ -56,33 +57,33 @@ Função para Enviar Mensagens
 
 A função send_message() envia mensagens para o usuário via API:
 
-def send_message(number, message):
+    def send_message(number, message):
 
-  url = BASE_URL + PAGE_ID + '/messages'  
+    url = BASE_URL + PAGE_ID + '/messages'  
 
-  headers = {    
-    "Authorization": "Bearer " + WHATSAPP_TOKEN
-  }
+    headers = {    
+      "Authorization": "Bearer " + WHATSAPP_TOKEN
+    }
    
-  data = {
-     "messaging_product": "whatsapp",
-     "to": number,
-     "text": {"body": message} 
-  }
+    data = {
+       "messaging_product": "whatsapp",
+       "to": number,
+       "text": {"body": message} 
+    }
 
-  requests.post(url, headers=headers, json=data)
+    requests.post(url, headers=headers, json=data)
 
-    Faz request POST para a API
-    Adiciona headers e payload
-    Envia número, mensagem e token
+  - Faz request POST para a API
+  - Adiciona headers e payload
+  - Envia número, mensagem e token
 
 ## Inicialização
 
 Por fim, o app é iniciado:
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    if __name__ == '__main__':
+      app.run(debug=True)
 
 Isso permite receber mensagens do webhook, responder pelo WhatsApp usando a API e ter um chatbot funcional.
 Funcionalidades
